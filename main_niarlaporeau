@@ -1,0 +1,167 @@
+include('liant')
+var enemies = getAliveEnemies()
+var idVilain = enemies[0]
+var idMe = getEntity()
+var me = poireau (idMe)
+var vilain = poireau (idVilain)
+
+
+var listeCellVilain = listCellforMP(vilain.mp, vilain.cell)
+var listeatteignable = listCellforMP(me.mp, me.cell)
+
+// Toutes les Cell atteignable par pistol de Villain //
+var cell_touchable = []
+var Celltest = []
+if (vilain.weapon == 37){
+for (var i=0; i<count(listeCellVilain); i++){
+	var butvilain = listeCellVilain[i]
+	if (getPathLength(vilain.cell, butvilain) == vilain.mp)
+		push(Celltest, butvilain)
+}
+
+for (var t=0; t<count(Celltest); t++){
+
+	var discover1 = getVoisin(Celltest[t])
+		//pushAll(cell_touchable, discover1)
+	var discover2 = []
+	for(var it=0; it<vilain.max_range;it++){	
+	
+		for (var i in discover1){
+			var voisinI = getVoisin(i)
+			var nbCellvoisinI = count(voisinI)
+			var ndCellindiscover1 = count(discover1)
+			for (var p=0; p<nbCellvoisinI; p++){
+				if (voisinI[p]!=vilain.cell and inArray(discover2, voisinI[p]) == false)
+					push(discover2, voisinI[p])
+		    	for (var x=0; x<count(discover2); x++){	    		
+					if (discover2[x]!=vilain.cell and inArray(cell_touchable, discover2[x]) == false and inArray(listeatteignable, discover2[x]) == true)
+		    		
+						push(cell_touchable, discover2[x])
+		    		}
+				}
+			}
+		discover1 = discover2
+		discover2 = []
+		}
+}
+
+debug("liste finale pistol " + cell_touchable)
+//mark(cell_touchable, COLOR_RED)
+}
+// Fin Cell pistol atteingnable //
+
+// Cells atteignable par shotGun et MachineGun //
+
+if(vilain.weapon==41 or vilain.weapon==38){
+	for(var i=0; i<count(listeCellVilain); i++){
+		for(var p=0; p<count(listeatteignable); p++){
+			if(isOnSameLine(listeCellVilain[i], listeatteignable[p]) == true) 
+			if(lineOfSight(listeCellVilain[i], listeatteignable[p]) == true) 
+			if(getPathLength(listeCellVilain[i], listeatteignable[p]) <= vilain.max_range)
+				push(cell_touchable, listeatteignable[p])	
+		}
+	}
+}
+
+
+
+if (getWeapon() == null){
+    setWeapon(WEAPON_PISTOL)
+}
+
+
+//moveIN(me.cell, vilain.cell, me.mp)
+
+// Cellule d'ou je peux tirer //
+var go = []
+var aim = getCellsToUseWeapon(me.weapon, vilain.id)
+if(aim!=null){	
+	for(var a in aim){
+		if (inArray(listeatteignable, a) == true ) push(go, a)
+	}
+}
+
+
+// Killing Blow //
+var lastshot = 0 
+for (var effet in vilain.weffects) { 
+    if (effet[0] == EFFECT_DAMAGE) { 
+        var minDégâts = effet[1] 
+        var dégâtsBoostés = minDégâts * (1 + me.str / 100) 
+        var dégâtsFinaux = dégâtsBoostés * (1 - vilain.rlvsheild / 100) - vilain.absshield 
+        lastshot += dégâtsFinaux
+    }
+}
+
+// tableau cell:distance 
+var mapaim = [:]
+if(go!=null){
+	for(var i in go){
+		mapaim += [i:getCellDistance(i, vilain.cell)]
+	
+	}
+}
+
+var aimspot = mapSearch(mapaim, mapMax(mapaim))
+// debug ("tableau cell/distance " + mapaim)
+// debug("la celulle : distance " + mapMax(mapaim))
+// debug("la celulle la plus loin d'ou je peux tirer " + aimspot)
+// 
+debug("les celulles touchables sont " + cell_touchable)
+// 
+// 
+debug("the spot"+aimspot)
+var canaim = getCellsToUseWeapon(vilain.id)
+var canaimsafe = []
+var wcout = getWeaponCost(me.weapon)
+var nbattaque = me.pt / wcout
+debug ("le nombre d'attaque possible "+nbattaque)
+
+if(aimspot == null){
+	for (var i in canaim){
+		if (inArray(cell_touchable, i) == false ) canaimsafe += i
+		}
+		debug("aim safe " +canaimsafe)
+		moveTowardCells(canaimsafe)
+			
+	}
+else {
+	if (me.cell != aimspot){	
+	moveTowardCell(aimspot)
+	for (var i=0; i<nbattaque; i++ ){
+		useWeaponOnCell(vilain.cell)
+		}
+	}	
+}
+
+
+
+debug("safe de tirer en "+canaimsafe)
+mark (canaimsafe, COLOR_GREEN)
+mark (aimspot, COLOR_BLUE)
+
+// Parametre d'attaque //
+
+
+
+//if (canUseWeapon(me.weapon, vilain.cell) == true){
+//	for (var i=0; i<nbattaque; i++ ){
+//		useWeaponOnCell(vilain.cell)
+//	}
+//}
+	
+if (me.mp != 0){ moveAwayFromCells(cell_touchable)}
+
+//// pistol = 37
+//// machine gun = 38
+//// neutrino = 182
+//// shotgun = 41
+//
+//
+//
+//
+//
+//
+//
+//
+//

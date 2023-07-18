@@ -1,0 +1,143 @@
+global obstacles = getObstacles();
+global nbObstacles = count(obstacles);
+
+/**
+ * Cette fonction revois les 4 cellules voisines
+ * 
+ * @param cell: cellule centrale [id]
+ * 
+ * @return liste des cellules voisine si non obstacle [liste]
+ * @version 1.0
+ */
+
+
+function getVoisin(id){
+		var x = getCellX(id)
+		var y = getCellY(id)
+		var result = []
+		var cell = getCellFromXY(x, y-1)
+		if(cell!=null and isObstacle(cell)==false) push(result, cell)
+		cell = getCellFromXY(x, y+1)
+		if(cell!=null and isObstacle(cell)==false) push(result, cell)
+		cell = getCellFromXY(x-1, y)
+		if(cell!=null and isObstacle(cell)==false) push(result, cell)
+		cell = getCellFromXY(x+1, y)
+		if(cell!=null and isObstacle(cell)==false) push(result, cell)
+		return result	
+}
+
+
+global MAP = [] 
+for(var i=0; i < 613; i++){
+	push(MAP, i)
+	}
+
+class cellule {
+    id
+    x
+    y
+    nature
+	touche
+	vulnerable
+	construct(id, x, y, nature, touche, vulnerable){
+		this.id = id
+		this.x = x
+		this.y = y
+		this.nature = nature
+		this.touche = touche
+		this.vulnerable = vulnerable
+	}
+}
+
+
+	
+//fonctions//
+
+/**
+ * Cette fonction renvoit un carré de x 
+ * 
+ * @param cell: la celulle centrale
+ * @param nb: longueure du côté du carré
+ * 
+ * @return result Une liste de celulles en carré [liste]
+ * @version 1.0
+ */
+
+function listCellcarreX(x, baseCell) {
+	var liste = []
+	var position = baseCell
+	for (var posix = getCellX(position)-x; posix < getCellX(position)+x+1; posix++){
+		for(var posy = getCellY(position) -x; posy < getCellY(position)+x+1; posy++){
+			//mark( getCellFromXY(posix, posy), COLOR_GREEN )
+			push(liste, getCellFromXY(posix, posy))
+		}
+	}
+	return liste
+}
+
+// Liste des Cell ou un poireau peut se deplacer //
+/**
+ * Cette fonction renvoit la liste des celulle dispo
+ * pour le deplacement d'un poreau
+ * 
+ * @param cell: la celulle centrale
+ * @param mp: les points de mouvement
+ * 
+ * @return result Une liste de celulles ou on peut se déplacer [liste]
+ * @version 1.0
+ */
+
+function listCellforMP(mp, baseCell) {
+	var liste = []
+	var position = baseCell
+	for (var posix = getCellX(position)-mp; posix < getCellX(position)+mp+1; posix++){
+		for(var posy = getCellY(position)-mp; posy < getCellY(position)+mp+1; posy++){
+			var goalCell = getCellFromXY(posix, posy)
+			if (getPathLength(baseCell, goalCell) <= mp and getCellContent(goalCell) == CELL_EMPTY){
+			push(liste, goalCell)
+			}
+		}
+	}
+	return liste
+}
+
+// Cell ou on est en vue
+function visible (cells_vilain, cells_me){
+	var listecellenvue = []
+	for (var danger in cells_vilain){
+		for (var potcell in cells_me){
+			if (lineOfSight(danger, potcell) == true and inArray(listecellenvue, potcell) == false){
+			push(listecellenvue, potcell)
+			}
+		}
+	}
+	return listecellenvue
+}
+
+// Liste des Cell en Cercle
+function zoneCercleX(x, baseCell) {
+	var liste = []
+	var position = baseCell
+	for (var posix = getCellX(position)-x; posix <= getCellX(position)+x; posix++){
+		for(var posy = getCellY(position) -x; posy <= getCellY(position)+x; posy++){
+			var goalCell = getCellFromXY(posix, posy)
+			if (getCellDistance(baseCell, goalCell) <= x){
+			push(liste, getCellFromXY(posix, posy))
+			}
+		}
+	}
+	return liste
+}
+
+// Cells en croix
+function listCellenX(x, position) {
+	var liste = []
+	for (var posix = getCellX(position)-x; posix < getCellX(position)+x+1; posix++){
+			push(liste, getCellFromXY(posix, getCellY(position)))
+		}
+	for(var posy = getCellY(position) -x; posy < getCellY(position)+x+1; posy++){
+			push(liste, getCellFromXY(getCellX(position), posy))
+	}
+	return liste
+}
+

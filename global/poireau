@@ -1,0 +1,31 @@
+class poireau {
+	id
+	weapon
+	weapons
+	weffects
+	max_range
+	min_range
+	cell
+	mp
+	hp
+	pt
+	str
+	rlvsheild
+	absshield
+	constructor(id){
+		this.id = id
+		this.weapon = getWeapon(id)
+		this.weapons = getWeapons(id)
+		this.max_range = getWeaponMaxRange(this.weapon)
+		this.min_range = getWeaponMinRange(this.weapon)
+		this.cell = getCell(id)
+		this.mp = getMP(id)
+		this.hp = getLife(id)
+		this.weffects = getWeaponEffects(this.weapon)
+		this.str = getStrength(id)
+		this.rlvsheild = getRelativeShield(id)
+		this.absshield = getAbsoluteShield(id)
+		this.pt = getTP(id)
+		}
+}
+

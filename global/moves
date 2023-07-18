@@ -1,0 +1,14 @@
+// avance de 1 vers Vilain si on ne peut pas tirer
+function moveIN (position, positionVilain, mesmp){
+	var listeCellversVilain = getPath(position, positionVilain)
+	var nextCell 
+	var maxmp = mesmp
+	for(var next=0; next <= maxmp; next++){
+		nextCell = listeCellversVilain[next]
+			if (next <= maxmp and canUseWeaponOnCell(positionVilain) == false) {
+				moveTowardCell(nextCell, 1)
+				}
+		}
+	return getCell()
+} 
+
