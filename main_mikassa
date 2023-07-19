@@ -1,0 +1,71 @@
+include('./liant')
+
+var enemies = getAliveEnemies()
+var idVilain = enemies[0]
+var idMe = getEntity()
+var me = poireau (idMe)
+var vilain = poireau (idVilain)
+
+/// On s'équipe d'une arme
+
+if (me.weapon == null) {
+	setWeapon(37)
+	}
+
+mark(getClosestCellToUseWeapon(vilain.id), COLOR_GREEN)
+
+var openfire = canUseWeaponOnCell(vilain.cell)
+var mp = me.mp
+var close = getClosestCellToUseWeapon(vilain.id)
+
+/// debut du test a mettre dans Zone attaque
+
+var liste_mpcells_vilain = listCellforMP(vilain.mp, vilain.cell)
+var vuln = []
+for (var spot in liste_mpcells_vilain){
+	var zonecible = listCellcarreX(getWeaponMaxRange(vilain.weapon), spot)
+	for (var cible in zonecible){
+		if (inArray(vuln, cible) == false and lineOfSight(spot, cible) == true ){
+			push(vuln, cible)			
+		}
+	}
+}
+
+
+
+
+moveTowardCell(close)
+/// Fin du test a mettere dans Zonne attaque
+
+var wcost = getWeaponCost(me.weapon)
+var nbattaque = me.pt / wcost
+
+
+
+if (canUseWeaponOnCell(vilain.cell) == true) {
+	for (var i=0; i<nbattaque; i++ ){
+		var shoot = useWeaponOnCell(vilain.cell)
+		if (shoot <=0){
+			break
+			}
+		}
+	}	
+
+OffensiveChip(1, vilain.cell, me.pt, me.weapon)
+
+var mpleft = getMP(me.id)
+var safe = []
+debug("points de move restant =" + mpleft)
+var cells_dispo = listCellforMP(mpleft, getCell(me.id))
+
+if ( mpleft !=0) {
+	for (var x in vuln) {
+		if (inArray(cells_dispo, x) == false and getCellDistance(x, me.cell) <= mpleft and x != me.cell){
+			push(safe, x)
+		}
+	}
+	if (safe != null){
+	moveTowardCells(safe)
+		}
+}
+mark(safe, COLOR_GREEN)

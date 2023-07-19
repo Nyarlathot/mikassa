@@ -1,0 +1,23 @@
+  /**
+ * Cette fonction utilise une chips d'attaque et renvois son cooldown'
+ * 
+ * @param chip: le numero de la chip a utiliser
+ * @param cell: la celulle visé
+ * @param metp: les points d'action
+ * @param myweapon: l'arme qui est équipé'
+ * 
+ * @return result le cooldown de la chip
+ * @version 1.0
+ */
+
+function OffensiveChip(chip,cell,metp,myweapon){
+	var cooldown = getChipCooldown(chip)
+	var chipcost = getChipCost(chip)
+	
+	if (canUseChipOnCell(chip , cell) == true ) {
+		if (cooldown == 0 and chipcost >= getTP(metp)) {
+			useChipOnCell(chip, cell)
+		}	
+	}
+	return cooldown
+}

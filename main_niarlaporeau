@@ -152,16 +152,3 @@ mark (aimspot, COLOR_BLUE)
 	
 if (me.mp != 0){ moveAwayFromCells(cell_touchable)}
 
-//// pistol = 37
-//// machine gun = 38
-//// neutrino = 182
-//// shotgun = 41
-//
-//
-//
-//
-//
-//
-//
-//
-//
